@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="X投稿補助">
+  <meta name="theme-color" content="#007aff">
+  <title>X投稿補助</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="header">
+      <h1 id="page-title">投稿一覧</h1>
+    </header>
+
+    <main id="view-container"></main>
+
+    <nav id="tab-bar">
+      <button class="tab-btn active" data-view="home">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">投稿</span>
+      </button>
+      <button class="tab-btn" data-view="create">
+        <span class="tab-icon">✏️</span>
+        <span class="tab-label">作成</span>
+      </button>
+      <button class="tab-btn" data-view="ai-generate">
+        <span class="tab-icon">✨</span>
+        <span class="tab-label">AI生成</span>
+      </button>
+      <button class="tab-btn" data-view="persona">
+        <span class="tab-icon">🎭</span>
+        <span class="tab-label">人格</span>
+      </button>
+      <button class="tab-btn" data-view="settings">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">設定</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- モーダル -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal-box">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
