@@ -1015,7 +1015,7 @@ const SettingsView = {
 
       <div class="settings-section">
         <div class="settings-header">アプリ情報</div>
-        <div class="info-row"><span>バージョン</span><span>2.0.0</span></div>
+        <div class="info-row"><span>バージョン</span><span>2.1.0</span></div>
         <div class="info-row"><span>ストレージ</span><span>ブラウザ内（localStorage）</span></div>
         <div class="info-row"><span>対応環境</span><span>Safari (iOS) / Chrome</span></div>
       </div>
