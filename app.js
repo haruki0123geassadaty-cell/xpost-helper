@@ -181,7 +181,7 @@ const UserProfile = {
     try {
       const { data } = await AuthManager.client
         .from('user_profiles')
-        .select('plan, daily_count, last_used_date')
+        .select('plan, daily_count, last_used_date, is_admin')
         .eq('id', AuthManager.user.id)
         .single();
       this._cache = data;
@@ -679,7 +679,7 @@ const AIView = {
       </div>
       <div class="form-section">
         <label class="form-label">生成件数：<span id="ai-count-disp">3</span>件</label>
-        <input id="ai-count" type="range" min="1" max="10" value="3" class="range-input">
+        <input id="ai-count" type="range" min="1" max="3" value="3" class="range-input">
       </div>
       <div class="form-section">
         <label class="form-label">人格プリセット</label>
@@ -738,21 +738,32 @@ const AIView = {
     const el = document.getElementById('ai-usage-bar'); if (!el) return;
     if (!profile) { el.innerHTML = '<span class="usage-loading">利用状況を取得できませんでした</span>'; return; }
     const plan      = profile.plan || 'free';
+    const isAdmin   = profile.is_admin === true;
     const limit     = UserProfile.limit(profile);
     const used      = UserProfile.todayCount(profile);
-    const remaining = UserProfile.remaining(profile);
+    const remaining = isAdmin ? '∞' : UserProfile.remaining(profile);
     const planLabel = plan === 'paid' ? '有料プラン' : '無料プラン';
-    const remainCls = remaining === 0 ? 'usage-remaining zero' : 'usage-remaining';
+    const remainCls = (!isAdmin && remaining === 0) ? 'usage-remaining zero' : 'usage-remaining';
     el.innerHTML = `
       <div class="usage-info">
         <span class="usage-plan-badge ${plan === 'paid' ? 'paid' : ''}">${planLabel}</span>
         <div class="usage-counts">
-          <span>本日 <strong>${used} / ${limit}</strong> 回</span>
+          <span>本日 <strong>${used} / ${isAdmin ? '∞' : limit}</strong> 回</span>
           <span class="${remainCls}">残り ${remaining} 回</span>
         </div>
-        ${plan === 'free' ? `<button id="ai-upgrade-btn" class="usage-upgrade-btn">有料プランへ ›</button>` : ''}
+        ${plan === 'free' && !isAdmin ? `<button id="ai-upgrade-btn" class="usage-upgrade-btn">有料プランへ ›</button>` : ''}
       </div>`;
     document.getElementById('ai-upgrade-btn')?.addEventListener('click', () => this._openCheckout());
+
+    const maxCount = (plan === 'paid' || isAdmin) ? 7 : 3;
+    const slider = document.getElementById('ai-count');
+    if (slider) {
+      slider.max = maxCount;
+      if (parseInt(slider.value) > maxCount) {
+        slider.value = maxCount;
+        document.getElementById('ai-count-disp').textContent = String(maxCount);
+      }
+    }
   },
 
   async _openCheckout() {

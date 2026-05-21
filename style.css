@@ -50,19 +50,18 @@ a { color: var(--accent); }
 #app {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 #header {
   flex-shrink: 0;
-  height: var(--header-h);
+  height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: center;
-  padding: 0 16px;
-  padding-top: env(safe-area-inset-top, 0);
+  align-items: flex-end;
+  padding: 0 16px 14px;
 }
 
 #page-title {
