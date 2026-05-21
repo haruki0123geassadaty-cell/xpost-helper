@@ -1018,6 +1018,10 @@ const SettingsView = {
         <div class="info-row"><span>バージョン</span><span>2.1.0</span></div>
         <div class="info-row"><span>ストレージ</span><span>ブラウザ内（localStorage）</span></div>
         <div class="info-row"><span>対応環境</span><span>Safari (iOS) / Chrome</span></div>
+        <div class="settings-row">
+          <span>表示が古い場合</span>
+          <button id="s-force-reload" class="link-btn">キャッシュをクリアして更新</button>
+        </div>
       </div>
     </div>`;
   },
@@ -1073,6 +1077,17 @@ const SettingsView = {
         AuthModal.open(() => Router.render('settings'));
       });
     }
+
+    document.getElementById('s-force-reload')?.addEventListener('click', async () => {
+      Toast.show('キャッシュをクリア中…', 3000);
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
+      } catch {}
+      window.location.reload(true);
+    });
   },
 
   async _loadProfile() {
