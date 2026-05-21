@@ -1,4 +1,4 @@
-const CACHE = 'xpost-v1';
+const CACHE = 'xpost-v2';
 const FILES = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -15,9 +15,23 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// キャッシュ優先 → ネットワークフォールバック
+// app.js / style.css はネットワーク優先（更新を即反映）、その他はキャッシュ優先
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+  const url = new URL(e.request.url);
+  const isAppFile = ['/app.js', '/style.css'].some(p => url.pathname.endsWith(p));
+  if (isAppFile) {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+  } else {
+    e.respondWith(
+      caches.match(e.request).then(r => r || fetch(e.request))
+    );
+  }
 });
